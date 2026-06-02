@@ -7,6 +7,28 @@ Toutes les évolutions notables de pdf-ua sont consignées ici. Le
 format suit https://keepachangelog.com/fr/1.1.0/[Keep a Changelog]
 et le versionnage respecte https://semver.org/lang/fr/[SemVer].
 
+== v0.1.1 — 2026-06-02 — Sortie PDF/UA-1 certifiée veraPDF
+
+=== Vérifié
+
+* Un document construit avec `PDF::UA::Document` (titre + langue +
+  structure taguée avec marked content via `page.tag`, police
+  TrueType embarquée) est déclaré **`isCompliant="true"`** par
+  **veraPDF 1.30.1** sur le profil PDF/UA-1 : 106 règles passées, 0
+  échec.
++
+RÉSERVE : veraPDF valide le sous-ensemble *vérifiable par machine*
+  de PDF/UA-1 (les checkpoints automatisables du Matterhorn
+  Protocol). Un passage veraPDF propre signifie aucun échec
+  automatisé ; la conformité PDF/UA complète exige encore une revue
+  humaine des checkpoints non automatisables (pertinence du texte
+  alternatif, ordre de lecture logique, etc.). Résultat fort, pas un
+  certificat complet.
+
+=== Modifié
+
+* Contrainte passée à `pdf ~> 0.7.6`.
+
 == v0.1.0 — 2026-06-02 — Bootstrap (J4, palier 1)
 
 === Ajouté
