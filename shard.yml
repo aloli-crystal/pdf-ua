@@ -1,0 +1,26 @@
+name: pdf-ua
+version: 0.1.0
+
+description: |
+  PDF/UA accessibility-profile layer on top of aloli-crystal/pdf.
+  Configures and validates documents for ISO 14289-1 (PDF/UA-1):
+  Tagged PDF logical structure, document language, title display,
+  and the pdfuaid identification. Composes with pdf-a. Milestone J4
+  of the ALOLI ISO PDF trajectory.
+
+authors:
+  - Philippe Nénert <philippe@aloli.fr>
+
+crystal: ">= 1.10.0"
+
+license: MIT
+
+dependencies:
+  pdf:
+    github: aloli-crystal/pdf
+    version: "~> 0.7.5"
+
+development_dependencies:
+  ameba:
+    github: crystal-ameba/ameba
+    version: "~> 1.6"

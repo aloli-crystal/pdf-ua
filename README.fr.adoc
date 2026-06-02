@@ -1,0 +1,85 @@
+= pdf-ua
+:toc: macro
+:icons: font
+
+Couche de profil d'accessibilité PDF/UA au-dessus de
+https://github.com/aloli-crystal/pdf[`aloli-crystal/pdf`].
+
+`pdf-ua` configure et valide les documents pour ISO 14289-1
+(PDF/UA-1), en s'appuyant sur le support Tagged PDF de pdf (arbre de
+structure logique, marked content, `/Lang`). Jalon **J4** de la
+trajectoire ISO PDF d'ALOLI. Il se compose avec
+https://github.com/aloli-crystal/pdf-a[`pdf-a`] pour produire des
+documents à la fois archivables et accessibles.
+
+toc::[]
+
+== État
+
+Premier palier (0.1.0) : accessibilité de niveau document.
+
+* `PDF::UA.configure(doc)` déclare l'identification pdfuaid
+  (`pdfua_part = 1`) et active `display_doc_title`.
+* `PDF::UA.violations(doc)` remonte les exigences de niveau
+  document : non taggé, langue manquante, titre manquant,
+  DisplayDocTitle désactivé, pdfuaid manquant — chacune tracée à sa
+  clause ISO 14289-1.
+* `PDF::UA::Document` s'auto-configure et lève au save (mode strict)
+  si une précondition n'est pas remplie.
+
+PAS encore couvert (paliers ultérieurs / `pdf-validate` en J5) : les
+vérifications par élément (chaque figure porte un `/Alt`, ordre des
+titres, en-têtes de tables, chaque contenu taggé ou marqué comme
+artifact). Un résultat `violations` vide n'est donc pas un certificat
+ISO 14289-1 complet.
+
+== Installation
+
+[source,yaml]
+----
+dependencies:
+  pdf-ua:
+    github: aloli-crystal/pdf-ua
+    version: "~> 0.1.0"
+----
+
+== Utilisation
+
+[source,crystal]
+----
+require "pdf-ua"
+
+pdf = PDF::UA::Document.new
+pdf.title = "Rapport accessible"
+pdf.lang = "fr"
+
+page = pdf.page { |_| }
+pdf.struct_tree do |tree|
+  doc = tree.add(PDF::Structure::Tag::DOCUMENT)
+  h1 = doc.add(PDF::Structure::Tag::H1, title: "Titre")
+  page.tag(h1) do
+    page.font "Helvetica", size: 20
+    page.text "Titre", at: {72, 760}
+  end
+end
+
+pdf.save("accessible.pdf") # lève si une précondition PDF/UA échoue
+----
+
+== Composition avec pdf-a
+
+[source,crystal]
+----
+require "pdf-a"
+require "pdf-ua"
+
+pdf = PDF::Document.new
+pdf.title = "Archive accessible"; pdf.lang = "fr"
+PDF::A.configure(pdf, PDF::A::Profile::A_2B)
+PDF::UA.configure(pdf)
+# ... construire un document taggé avec polices embarquées ...
+----
+
+== Licence
+
+MIT. Voir `LICENSE`.

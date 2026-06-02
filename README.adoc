@@ -1,0 +1,83 @@
+= pdf-ua
+:toc: macro
+:icons: font
+
+PDF/UA accessibility-profile layer on top of
+https://github.com/aloli-crystal/pdf[`aloli-crystal/pdf`].
+
+`pdf-ua` configures and validates documents for ISO 14289-1
+(PDF/UA-1), building on pdf's Tagged PDF support (logical structure
+tree, marked content, `/Lang`). Milestone **J4** of the ALOLI ISO
+PDF trajectory. It composes with
+https://github.com/aloli-crystal/pdf-a[`pdf-a`] to produce documents
+that are both archival and accessible.
+
+toc::[]
+
+== Status
+
+First palier (0.1.0) : document-level accessibility.
+
+* `PDF::UA.configure(doc)` declares the pdfuaid identification
+  (`pdfua_part = 1`) and turns on `display_doc_title`.
+* `PDF::UA.violations(doc)` reports the document-level requirements :
+  not tagged, missing language, missing title, DisplayDocTitle off,
+  missing pdfuaid — each traced to its ISO 14289-1 clause.
+* `PDF::UA::Document` auto-configures and raises on save (strict
+  mode) if a precondition is unmet.
+
+NOT yet covered (later paliers / `pdf-validate` in J5) : per-element
+checks (every figure carries `/Alt`, heading order, table headers,
+every piece of content tagged or marked as an artifact). A clean
+`violations` result is therefore not a full ISO 14289-1 certificate.
+
+== Installation
+
+[source,yaml]
+----
+dependencies:
+  pdf-ua:
+    github: aloli-crystal/pdf-ua
+    version: "~> 0.1.0"
+----
+
+== Usage
+
+[source,crystal]
+----
+require "pdf-ua"
+
+pdf = PDF::UA::Document.new
+pdf.title = "Rapport accessible"
+pdf.lang = "fr"
+
+page = pdf.page { |_| }
+pdf.struct_tree do |tree|
+  doc = tree.add(PDF::Structure::Tag::DOCUMENT)
+  h1 = doc.add(PDF::Structure::Tag::H1, title: "Titre")
+  page.tag(h1) do
+    page.font "Helvetica", size: 20
+    page.text "Titre", at: {72, 760}
+  end
+end
+
+pdf.save("accessible.pdf") # raises if a PDF/UA precondition fails
+----
+
+== Composing with pdf-a
+
+[source,crystal]
+----
+require "pdf-a"
+require "pdf-ua"
+
+pdf = PDF::Document.new
+pdf.title = "Archive accessible"; pdf.lang = "fr"
+PDF::A.configure(pdf, PDF::A::Profile::A_2B)
+PDF::UA.configure(pdf)
+# ... build a tagged document with embedded fonts ...
+----
+
+== License
+
+MIT. See `LICENSE`.

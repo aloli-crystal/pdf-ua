@@ -1,0 +1,26 @@
+= Changelog
+:toc: left
+:toc-title: Versions
+:toclevels: 2
+
+All notable changes to pdf-ua are documented here. The format follows
+https://keepachangelog.com/1.1.0/[Keep a Changelog] and versioning
+follows https://semver.org/[SemVer].
+
+== v0.1.0 — 2026-06-02 — Bootstrap (J4, palier 1)
+
+=== Added
+
+* Initial PDF/UA accessibility-profile layer over `aloli-crystal/pdf`
+  (requires pdf ~> 0.7.5).
+* `PDF::UA.configure(doc)` — declares the pdfuaid identification
+  (`pdfua_part = 1`) and turns on `display_doc_title`.
+* `PDF::UA.violations(doc)` — document-level checks : not tagged,
+  missing language, missing title, DisplayDocTitle off, missing
+  pdfuaid — each traced to its ISO 14289-1 clause.
+* `PDF::UA.conformant?(doc)`.
+* `PDF::UA::Document` — auto-configures on construction and, in the
+  default strict mode, raises `PDF::UA::ConformanceError` on
+  `write`/`save` if a precondition is unmet.
+* Composes with `pdf-a` : a document may be configured for both
+  PDF/A and PDF/UA.
