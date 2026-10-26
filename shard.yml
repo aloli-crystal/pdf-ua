@@ -1,5 +1,5 @@
 name: pdf-ua
-version: 0.1.1
+version: 0.1.2
 
 description: |
   PDF/UA accessibility-profile layer on top of aloli-crystal/pdf.
